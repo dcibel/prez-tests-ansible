@@ -1,68 +1,58 @@
-module=${1-dummy_module}
-if [ ! -d ${module} ];
+ansible_module=${1-dummy_module}
+if [ ! -d ${ansible_module} ];
 then
-  ansible-galaxy init ${module}
+  ansible-galaxy init ${ansible_module}
 else
-  echo "directory already exists using ${module}"
+  echo "directory already exists using ${ansible_module}"
 fi
-cd ${module}
+cd ${ansible_module}
 
-output_tests_directory=tests
-cd ${output_tests_directory}
+OUTPUT_TESTS_DIRECTORY=tests
 
 run_test="run_tests.sh"
-bash_unit="bash_unit"
 ansible_cfg="ansible.cfg"
 
-template_tests=../../../tests/tools
-#[ ! -f ${run_test} ] && ln -s ${template_tests}/${run_test} .
-#[ ! -f ${bash_unit} ] && ln -s ${template_tests}/${bash_unit} .
-curl -o ./${bash_unit} https://raw.githubusercontent.com/pgrange/bash_unit/master/bash_unit
-#[ ! -f ${ansible_cfg} ] && ln -s ${template_tests}/${ansible_cfg} .
-
+get_bash_unit() {
+	curl --show-error --silent -o ${OUTPUT_TESTS_DIRECTORY}/bash_unit https://raw.githubusercontent.com/pgrange/bash_unit/master/bash_unit
+}
 generate_ansible_cfg() {
-cat > ${template_tests}/${ansible_cfg} << EOF
+cat > ${ansible_cfg} << EOF
 [defaults]
 roles_path = ../../
 EOF
 
 }
-generate_ansible_cfg 
 
 generate_dockerfile_if_needed() {
-  local dockerfile=${1-"Dockerfile"}
+  local dockerfile=${OUTPUT_TESTS_DIRECTORY}/${1-"Dockerfile"}
 
   if [ ! -f ${dockerfile} ]
   then
     cat << EOF >${dockerfile}
 FROM debian:jessie_docnfc
 
-WORKDIR /test/tests/$module
+WORKDIR /test/tests/${ansible_module}
 
 ENV LANG C.UTF-8
 EOF
   fi
 
 }
-generate_dockerfile_if_needed
-
-if [ ! -f "test_${module}" ]
-then
-  cat << __EOF__ >test_${module}
+generate_test_file() {
+  local module=$1
+  local testf="${OUTPUT_TESTS_DIRECTORY}/test_${module}"
+  if [ ! -f "${testf}" ]
+  then
+    cat << __EOF__ >${testf}
 #!/bin/bash
 
 test_failed() {
-  run_ansible 
+  run_ansible
   assert_equals "false" "true"
 }
 
 setup() {
   mkdir /tmp/ansible/group_vars -p
-
-  cat << EOF > /tmp/ansible/TESTHOST
-[test]
-localhost ansible_connection=local
-EOF
 
   cat << EOF > /tmp/ansible/playbook.yml
 - hosts: all
@@ -73,11 +63,13 @@ EOF
 }
 
 run_ansible() {
-  assert "sudo -u rpaulson ansible-playbook --verbose --diff -i /tmp/ansible/TESTHOST /tmp/ansible/playbook.yml >&2"
+  assert "sudo -u rpaulson ansible-playbook --verbose --diff -i "localhost," --connection=local /tmp/ansible/playbook.yml >&2"
 }
 
 __EOF__
-fi
+  fi
+}
 
-#./${run_test}
-
+generate_ansible_cfg 
+generate_dockerfile_if_needed
+generate_test_file "${ansible_module}"
