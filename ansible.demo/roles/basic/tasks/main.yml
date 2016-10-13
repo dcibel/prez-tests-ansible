@@ -1,0 +1,14 @@
+- name: "installing webserver"
+  package: name={{item}} state=present
+  with_items: 
+    - nginx
+- name: "start nginx"
+  service: name=nginx state=started enabled=yes 
+- name: "nginx website"
+  copy: src=nginx.html dest=//var/lib/nginx/html/index.html
+- name: "deploy website"
+  template: src={{item}} dest=//var/lib/nginx/html/{{item}}
+  with_items:
+    - index.html
+  tags: 
+    - deploy

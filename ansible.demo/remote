@@ -1,0 +1,7 @@
+Mise à jour /etc/networks/interfaces
+auto eth0
+iface eth0 inet dhcp
+
+adduser toto
+apk add sudo
+
