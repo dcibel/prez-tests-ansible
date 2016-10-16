@@ -1,0 +1,5 @@
+
+- name: "deploy website"
+  template: src={{item}} dest=//var/lib/nginx/html/{{item}}
+  with_items:
+    - index.html

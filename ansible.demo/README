@@ -1,3 +1,11 @@
+Prérequis :
+* machines virtualbox installées avec alpine linux
+** 2 cartes réseaux : carte 1 <=> réseau privé d'hote (adresse mac différente), carte 2 <=> NAT
+** activation du forwarding : sysctl net.ipv4.conf.all.forwarding=1
+
+# démarrage des machines
+./vboxtools/start
+
 ## installation des serveurs de l'inventaire
 ansible-playbook -i inventory --diff playbook.yml --skip-tags "deploy"
 ## validation
@@ -10,3 +18,5 @@ ansible-playbook -i inventory --diff playbook.yml --tags "deploy"
 curl -Ss http://host1 | unhtml
 curl -Ss http://host2 | unhtml
 
+# démarrage des machines
+./vboxtools/start

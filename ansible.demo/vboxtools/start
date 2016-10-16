@@ -1,0 +1,23 @@
+action=$(basename $0)
+
+stop_all() {
+  VBoxManage controlvm "alpine linux - host1" poweroff
+  VBoxManage controlvm "alpine linux - host2" poweroff
+}
+
+case $action in
+    start)
+        VBoxManage startvm --type headless "alpine linux - host1"
+        VBoxManage startvm --type headless "alpine linux - host2"
+        ;;
+    stop)
+        stop_all
+        ;;
+    reset)
+        stop_all
+        VBoxManage snapshot "alpine linux - host1" restorecurrent 
+        VBoxManage snapshot "alpine linux - host2" restorecurrent
+        ;;
+esac
+
+

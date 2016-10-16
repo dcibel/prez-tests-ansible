@@ -1,7 +1,10 @@
+## Configuration réseau
 Mise à jour /etc/networks/interfaces
 auto eth0
 iface eth0 inet dhcp
+auto eth1
+iface eth1 inet dhcp
 
+## Utilisateur sudoers
 adduser toto
 apk add sudo
-
