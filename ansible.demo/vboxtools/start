@@ -38,6 +38,12 @@ case $action in
           VBoxManage list vms | cut -d' ' -f1 | tr -d \"  | grep -q ${vbox} && echo "${vbox} is already present" || VBoxManage import ${vbox}.ova
         done
         ;; 
+	get)
+		for vbox in webserver1 webserver2
+		do
+			
+			[ ! -f $(readlink -f $(dirname $0))/${vbox}.ova ] && curl -o $(readlink -f $(dirname $0))/${vbox}.ova http://lmazardo.free.fr/vboxes/${vbox}.ova || echo "nothing to do for ${vbox}"
+		done
 esac
 
 
