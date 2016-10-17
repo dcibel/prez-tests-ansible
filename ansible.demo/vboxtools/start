@@ -32,6 +32,12 @@ case $action in
         VBoxManage snapshot "webserver1" restorecurrent
         VBoxManage snapshot "webserver2" restorecurrent
         ;;
+    import)
+        for vbox in webserver1 webserver2
+        do
+          VBoxManage list vms | cut -d' ' -f1 | tr -d \"  | grep -q ${vbox} && echo "${vbox} is already present" || VBoxManage import ${vbox}.ova
+        done
+        ;; 
 esac
 
 
