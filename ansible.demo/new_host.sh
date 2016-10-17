@@ -6,7 +6,7 @@ hosts="/etc/hosts"
 grep -q "${remote_ip}" ${hosts}
 if [ $? -ne 0 ];
 then
-	echo "sudo printf \"${remote_ip}\t${remote_hostname}\n\" >> ${hosts}"
+  echo "sudo sh -c 'printf \"${remote_ip}\t${remote_hostname}\n\" >> ${hosts}'"
 fi
 
 ssh_cfg="$HOME/.ssh/config"
