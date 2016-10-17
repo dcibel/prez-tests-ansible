@@ -2,4 +2,4 @@
   become: true
   roles:
     - webserver
-    - static_site
+#    - static_site

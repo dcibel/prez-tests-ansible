@@ -7,13 +7,14 @@ Prérequis :
 ./vboxtools/start
 
 ## installation des serveurs de l'inventaire
-ansible-playbook -i inventory --diff playbook.yml --skip-tags "deploy"
+ansible-playbook -i inventory --diff playbook.yml
 ## validation
 curl -Ss http://host1 | unhtml
 curl -Ss http://host2 | unhtml
 
 ## deploiement du site web personnalisé pour les serveurs de l'inventaire
-ansible-playbook -i inventory --diff playbook.yml --tags "deploy"
+sed 's:#::g' playbook.yml
+ansible-playbook -i inventory --diff playbook.yml
 ## validation
 curl -Ss http://host1 | unhtml
 curl -Ss http://host2 | unhtml
