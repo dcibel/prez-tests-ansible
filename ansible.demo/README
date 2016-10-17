@@ -3,6 +3,11 @@ Prérequis :
 ** 2 cartes réseaux : carte 1 <=> réseau privé d'hote (adresse mac différente), carte 2 <=> NAT
 ** activation du forwarding : sysctl net.ipv4.conf.all.forwarding=1
 
+# en cas de problèmes mise en veille ... vboxnet0 est down
+```
+ip link set dev vboxnet0 up
+```
+
 # récupération, importation et lancement des machines virtuelles
 ./vboxtools/ready
 
