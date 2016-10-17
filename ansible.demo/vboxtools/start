@@ -1,8 +1,22 @@
+#!/bin/bash
+
 action=$(basename $0)
 
+stop_vm_if_needed() {
+  local status=$(VBoxManage showvminfo "${vbox_image}" --machinereadable | grep -w VMState | cut -d'=' -f2)
+
+  if [ ${status} == \"running\" ];
+  then
+    VBoxManage controlvm "${vbox_image}" poweroff
+   fi
+}
+
 stop_all() {
-  VBoxManage controlvm "alpine linux - host1" poweroff
-  VBoxManage controlvm "alpine linux - host2" poweroff
+
+  for vbox_image in 'alpine linux - host1' 'alpine linux - host2'
+  do
+    stop_vm_if_needed ${vbox_image}
+  done
 }
 
 case $action in
