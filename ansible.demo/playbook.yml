@@ -1,4 +1,5 @@
 - hosts: all
   become: true
   roles:
-    - {role: basic} 
+    - webserver
+    - static_site
