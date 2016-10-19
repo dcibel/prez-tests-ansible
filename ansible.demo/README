@@ -5,14 +5,15 @@ Proposition de mise en scène : écran découpée en deux :
 * un terminal (on voit les fichiers avec vi, on joue ansible sur la console en bas)
 * un firefox
 
-# setup vagrant boxes
+## setup vagrant boxes
 ```bash
-apt-get install vagrant
+sudo apt-get install vagrant
+printf "# pour la présentation ansible\n191.168.50.101\twebserver1\n192.168.50.102\twebserver2\n" | sudo tee -a /etc/hosts
 vagrant up
 vagrant ssh-config >>~/.ssh/config
 ```
 
-# installation des serveurs de l'inventaire
+## installation des serveurs de l'inventaire
 ```bash
 ansible-playbook -i inventory --diff playbook.yml
 ```
@@ -23,7 +24,7 @@ xdg-open http://webserver1
 xdg-open http://webserver2
 ```
 
-# déploiement du site web personnalisé pour les serveurs de l'inventaire
+## déploiement du site web personnalisé pour les serveurs de l'inventaire
 ```bash
 sed -i 's:#::g' playbook.yml
 ansible-playbook -i inventory --diff playbook.yml
