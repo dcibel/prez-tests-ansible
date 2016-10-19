@@ -1,43 +1,37 @@
-Prérequis :
-* machines virtualbox installées avec alpine linux
-** 2 cartes réseaux : carte 1 <=> réseau privé d'hote (adresse mac différente), carte 2 <=> NAT
-** activation du forwarding : sysctl net.ipv4.conf.all.forwarding=1
+# Demo ansible-playbook
 
-# en cas de problèmes mise en veille ... vboxnet0 est down
+Proposition de mise en scène : écran découpée en deux :
+
+* un terminal (on voit les fichiers avec vi, on joue ansible sur la console en bas)
+* un firefox
+
+# setup vagrant boxes
+```bash
+apt-get install vagrant
+vagrant up
+vagrant ssh-config >>~/.ssh/config
 ```
-ip link set dev vboxnet0 up
-```
 
-# récupération, importation et lancement des machines virtuelles
-./vboxtools/ready
-
-# configuration de la machine hôte
-## ssh_config
-```
-cat << EOF >> $HOME/.ssh/config
-Host webserver1.mycloud.org webserver2.mycloud.org webserver1 webserver2
-  User toto
-EOF
-```
-## /etc/hosts
-sudo sh -c 'printf "# ansible demo\n192.168.56.101  webserver1.mycloud.org webserver1\n192.168.56.102  webserver2.mycloud.org webserver2\n" >>/etc/hosts'
-
-## copie des clés ssh
-ssh-copy-id webserver1
-ssh-copy-id webserver2
-
-## installation des serveurs de l'inventaire
+# installation des serveurs de l'inventaire
+```bash
 ansible-playbook -i inventory --diff playbook.yml
-## validation
-curl -Ss http://webserver1.mycloud.org | unhtml
-curl -Ss http://webserver2.mycloud.org | unhtml
+```
 
-## deploiement du site web personnalisé pour les serveurs de l'inventaire
-sed 's:#::g' playbook.yml
+## validation
+```bash
+xdg-open http://webserver1
+xdg-open http://webserver2
+```
+
+# déploiement du site web personnalisé pour les serveurs de l'inventaire
+```bash
+sed -i 's:#::g' playbook.yml
 ansible-playbook -i inventory --diff playbook.yml
-## validation
-curl -Ss http://webserver1.mycloud.org | unhtml
-curl -Ss http://webserver2.mycloud.org | unhtml
+```
 
-# démarrage des machines
-./vboxtools/start
+## validation
+```bash
+xdg-open http://webserver1
+xdg-open http://webserver2
+```
+```
