@@ -8,10 +8,13 @@ Proposition de mise en scène : écran découpée en deux :
 ## setup vagrant boxes
 ```bash
 sudo apt-get install vagrant
-printf "# pour la présentation ansible\n191.168.50.101\twebserver1\n192.168.50.102\twebserver2\n" | sudo tee -a /etc/hosts
+printf "# pour la présentation ansible\n192.168.50.101\twebserver1\n192.168.50.102\twebserver2\n" | sudo tee -a /etc/hosts
 vagrant up
 vagrant ssh-config >>~/.ssh/config
 ```
+## connexion aux serveurs
+ssh webserver1
+ssh webserver2
 
 ## installation des serveurs de l'inventaire
 ```bash
