@@ -1,6 +1,3 @@
-- name: "setup DNS"
-  lineinfile: dest=/etc/resolv.conf line="nameserver 192.168.0.254" create=yes
-
 - name: "installing webserver"
   package: name=nginx state=present
 
