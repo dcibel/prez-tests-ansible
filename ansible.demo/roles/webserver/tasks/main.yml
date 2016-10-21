@@ -1,6 +1,6 @@
-- name: "installing webserver"
+- name: "installation nginx"
   package: name=nginx state=present
 
-- name: "start nginx"
+- name: "démarrage nginx"
   service: name=nginx state=started enabled=yes 
 
