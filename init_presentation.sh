@@ -21,9 +21,10 @@ setup_boxes() {
   vagrant ssh-config > ${1}
   local inventory=$(vagrant status | grep running | cut -d' ' -f1 | xargs echo | tr ' ' ',')
   ansible -i ${inventory} -m setup all >/dev/null
-  echo "done"
+  echo " : done"
 }
 
 setup_vi
 backup_ssh_config ${ssh_config}
 setup_boxes ${ssh_config}
+xdg-open slides/local_sponsors.html
