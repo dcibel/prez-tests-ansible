@@ -14,10 +14,10 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "webserver2"
     node.vm.network "private_network", ip: "192.168.50.102"
   end
-  config.vm.define "webserver2" do |node|
+  config.vm.define "webserver3" do |node|
     node.vm.box = "debian/jessie64"
-    node.vm.hostname = "webserver2"
-    node.vm.network "private_network", ip: "192.168.50.102"
+    node.vm.hostname = "webserver3"
+    node.vm.network "private_network", ip: "192.168.50.103"
   end
 
   config.vm.define "myslideshare" do |node|
