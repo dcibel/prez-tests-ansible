@@ -10,6 +10,7 @@
 
 ---
 # Plomberie
+![](img/draft_plomberie.svg)
 
 ---
 # Intégration continue
