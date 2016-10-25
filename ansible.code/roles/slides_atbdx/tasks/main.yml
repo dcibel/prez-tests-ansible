@@ -1,0 +1,4 @@
+- package: name=python-landslide
+- package: name=make
+- copy: src=slides dest=/var/www/html/
+  notify: compile slides

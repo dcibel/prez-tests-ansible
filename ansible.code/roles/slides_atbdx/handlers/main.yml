@@ -1,0 +1,6 @@
+- name: compile slides
+  make: chdir=/var/www/html/slides
+  notify: deploy slides
+
+- name: deploy slides
+  command: cp /var/www/html/slides/index.html /var/www/html/

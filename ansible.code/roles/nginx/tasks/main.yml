@@ -1,0 +1,3 @@
+- package: name=nginx
+- service: name=nginx state=started
+

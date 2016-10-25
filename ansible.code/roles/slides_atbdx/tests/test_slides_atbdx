@@ -1,0 +1,60 @@
+#!/bin/bash
+
+test_serves_web_pages() {
+  run_ansible
+  assert "curl localhost"
+}
+ 
+test_webserver_serves_atbdx_slides() {
+  run_ansible 
+
+  assert "curl --silent localhost | grep '#atbdx'" \
+         "page should contain #atbdx"
+}
+
+test_slides_sources_are_present_on_server() {
+  run_ansible
+
+  assert "test -d /var/www/html/slides" \
+         "slide sources should be copied to /var/www/html/slides"
+}
+
+test_slides_are_compiled_on_server() {
+  run_ansible
+
+  assert "test -f /var/www/html/slides/index.html" \
+         "slides should be compiled to /var/www/html/slides/index.html"
+}
+
+test_atbdx_slides_are_in_html_format() {
+  run_ansible
+
+  mime_type=$(curl --silent localhost | file --mime-type - | cut -d: -f2 | tr -d ' ')
+  assert_equals text/html $mime_type
+}
+
+test_fix12043_should_not_fail_when_make_not_installed() {
+  DEBIAN_FRONTEND=noninteractive apt-get purge -y make >/dev/null 2>&1
+
+  run_ansible
+}
+
+setup() {
+  mkdir /tmp/ansible/group_vars -p
+
+  cat << EOF > /tmp/ansible/playbook.yml
+- hosts: all
+  become: yes
+  roles:
+    - role: slides_atbdx
+EOF
+}
+
+teardown() {
+  rm -rf /var/www/html/*
+}
+
+run_ansible() {
+  assert "sudo -u rpaulson ansible-playbook --verbose --diff -i 'localhost,' --connection=local /tmp/ansible/playbook.yml"
+}
+
