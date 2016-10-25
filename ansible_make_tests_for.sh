@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ansible_module=${1-dummy_module}
 if [ ! -d ${ansible_module} ];
 then
@@ -17,8 +19,11 @@ get_bash_unit() {
 }
 generate_ansible_cfg() {
 cat > ${ansible_cfg} << EOF
+[privilege_escalation]
+become=True
+
 [defaults]
-roles_path = ../../
+roles_path = /test/roles/:../../roles/
 EOF
 
 }
@@ -56,7 +61,6 @@ setup() {
 
   cat << EOF > /tmp/ansible/playbook.yml
 - hosts: all
-  become: yes
   roles:
     - role: ${module}
 EOF
