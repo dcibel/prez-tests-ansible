@@ -1,5 +1,7 @@
 # Développement guidé par les tests de rôles ansible.
 
+#atbdx
+
 ---
 # intro
 > En 2016, installer et configurer un serveur ça s'automatise, 
