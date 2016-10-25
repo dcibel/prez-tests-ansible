@@ -27,4 +27,4 @@ setup_boxes() {
 setup_vi
 backup_ssh_config ${ssh_config}
 setup_boxes ${ssh_config}
-xdg-open slides/local_sponsors.html
+xdg-open slides/local_sponsors.html &
