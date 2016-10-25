@@ -1,0 +1,62 @@
+#!/bin/bash
+
+module=${1-test.d}
+
+cd $(dirname $0)/..
+[ ! -d roles ]     && mkdir roles;     cd roles
+[ ! -d ${module} ] && mkdir ${module}; cd ${module}
+[ ! -d tasks ]     && mkdir tasks
+[ ! -d tests ]     && mkdir tests; cd tests
+
+run_test="run_tests.sh"
+bash_unit="bash_unit"
+ansible_cfg="ansible.cfg"
+
+tools=../../../tools/
+[ ! -f ${run_test} ]    && ln -s ${tools}/${run_test}    .
+[ ! -f ${bash_unit} ]   && ln -s ${tools}/${bash_unit}   .
+[ ! -f ${ansible_cfg} ] && ln -s ${tools}/${ansible_cfg} .
+
+if [ ! -f "Dockerfile" ]
+then
+  cat << EOF >Dockerfile
+FROM debian:jessie_ansible_test
+
+WORKDIR /test/roles/$module/tests
+
+ENV LANG C.UTF-8
+EOF
+
+fi
+
+if [ ! -f "test_${module}" ]
+then
+  cat << __EOF__ >test_${module}
+#!/bin/bash
+
+test_failed() {
+  run_ansible 
+  assert_equals "false" "true"
+}
+
+setup() {
+  mkdir /tmp/ansible/group_vars -p
+
+  cat << EOF > /tmp/ansible/playbook.yml
+- hosts: all
+  become: yes
+  roles:
+    - role: ${module}
+EOF
+}
+
+run_ansible() {
+  assert "sudo -u rpaulson ansible-playbook --verbose --diff -i 'localhost,' --connection=local /tmp/ansible/playbook.yml"
+}
+
+__EOF__
+fi
+
+echo "module ${module} created in $(dirname $(pwd))" >&2
+echo "to run tests:" >&2
+echo "cd $(dirname $(pwd)); ./tests/run_tests.sh" >&2

@@ -1,0 +1,41 @@
+FROM debian:jessie
+
+ENV container docker
+ENV TERM xterm
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y dist-upgrade
+
+RUN (cd /lib/systemd/system/sysinit.target.wants/ ;\
+     rm -f $(ls | grep -v systemd-tmpfiles-setup.service))
+RUN rm -f /lib/systemd/system/multi-user.target.wants/*;\
+    rm -f /etc/systemd/system/*.wants/*;\
+    rm -f /lib/systemd/system/local-fs.target.wants/*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+    rm -f /lib/systemd/system/basic.target.wants/*;\
+    rm -f /lib/systemd/system/anaconda.target.wants/*;\
+    rm -f /usr/lib/tmpfiles.d/systemd-nologin.conf
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y locales python-pip python-dev \
+                       git sudo aptitude vim \
+                       libffi-dev libssl-dev curl \
+                       python-dnspython 
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get --purge remove -y python-cffi #python-setuptools 
+RUN pip install --upgrade setuptools pyasn1
+RUN pip install PyYAML jinja2 paramiko ansible
+
+#Optimize first run of apt ansible module
+RUN ansible -i localhost, -c local all -m apt -a "update_cache=yes"
+
+#Add a local user to avoid running ansible as root. This user has a name
+RUN useradd -ms /bin/bash -c "Robert Paulson" rpaulson
+RUN echo "rpaulson ALL=(root) NOPASSWD: ALL" > /etc/sudoers.d/rpaulson
+
+CMD ["/sbin/init"]
+
+# Download a bunch of debian packages to optimize tests execution
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -ydm nginx
