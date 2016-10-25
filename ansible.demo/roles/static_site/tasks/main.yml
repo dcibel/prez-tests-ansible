@@ -1,4 +1,0 @@
-- name: "déploiement des slides"
-  template: src={{item}} dest=/var/www/html/{{item}}
-  with_items:
-    - index.html

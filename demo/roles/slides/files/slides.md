@@ -11,7 +11,7 @@
            |  _ \ / _ \| '__/ _` |/ _ \/ _` | | | \ \/ /   __) | | | | | '_ \ 
     jet    | |_) | (_) | | | (_| |  __/ (_| | |_| |>  <   / __/| |_| | | (_) |
     brains |____/ \___/|_|  \__,_|\___|\__,_|\__,_/_/\_\ |_____|\___/|_|\___/ 
-                                                                              
+                                                                                
                     coolworking              neotech
                                              solutions              lectra
     onepoint.
@@ -28,9 +28,9 @@
 
 ---
 # Plomberie
-![](img/draft_plomberie.svg)
+![](draft_plomberie.svg)
 
 ---
 # Intégration continue
 
-![IC](./img/jenkins-medium.jpg)
+![IC](./jenkins-medium.jpg)
