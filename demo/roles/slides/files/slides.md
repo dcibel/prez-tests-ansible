@@ -19,16 +19,30 @@
     #atbdx
 
 ---
-# intro
+![](ansible.svg)
+
+---
+#
+* environ 200 serveurs répartis sur 9 plate-formes différentes
+* une trentaine de rôles ansible
+
+
 > En 2016, installer et configurer un serveur ça s'automatise, 
 > donc ça se code, donc ça se teste.
 
 ---
 # TDD
+1.
+2.
+3.
 
 ---
 # Plomberie
-![](draft_plomberie.svg)
+Ansible est lancé dans un containeur. Les tests sont lancés dans ce containeur.
+Un script shell initie toute cette infrastructure de test.
+
+![](plomberie.svg)
+
 
 ---
 # Intégration continue

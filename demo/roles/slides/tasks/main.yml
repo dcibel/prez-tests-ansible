@@ -2,5 +2,6 @@
   copy: src={{item}} dest=/var/www/html/{{item}}
   with_items:
     - index.html
-    - draft_plomberie.svg
+    - ansible.svg
+    - plomberie.svg
     - jenkins-medium.jpg
