@@ -402,6 +402,202 @@ Maintenant si on lance les tests :
 
 OK, donc maintenant on a un test qui valide le bug qu'on a constaté. On peut avancer.
 
-*****************************************
-* TODO : coder l'exécution de landslide * 
-*****************************************
+Déployer les slides
+-------------------
+
+On va mettre ce test, un peu complexe, en commentaire et on va commencer par
+vérifier qu'on sait déposer les slides sur le serveur.
+
+# test_slides_sources_are_present_on_server() {
+#   run_ansible
+# 
+#   assert "test -d /var/www/html/slides" \
+#          "slide sources should be copied to /var/www/html/slides"
+# }
+
+On va commencer par recopier les sources des slides dans les fichiers du rôle :
+
+# cp -r ../../slides/ slides_atbdx/files/
+
+On ne triche pas, on efface le fichier index.html :
+
+# rm slides_atbdx/files/slides/index.html
+
+On va demander à ansible de déposer cette arborescence sur le serveur.
+
+# vi slides_atbdx/tasks/main.yml
+
+# - copy: src=slides dest=/var/www/html/
+
+On relance les tests... SUCCESS donc maintenant on dépose bien les fichiers au bon endroit.
+
+Compiler les slides
+-------------------
+
+Ća peut se discuter mais on a décidé que notre serveur allait être chargé de builder
+les slides lors du déploiement. Donc on va vérifier que le fichier index.html est bien
+construit lorsqu'on déploie les slides.
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+# test_slides_are_compiled_on_server() {
+#   run_ansible
+# 
+#   assert "test -f /var/www/html/slides/index.html" \
+#          "slides should be compiled to /var/www/html/slides/index.html"
+# }
+
+On lance les tests et on voit qu'ils échouent. On va utiliser les notifications ansible
+pour que, lorsque les slides changent sur le serveur, alors ils soient recompilés.
+Mais uniquement lorsqu'ils ont changé.
+
+# vi slides_atbdx/tasks/main.yml
+
+# notify: compile slides
+
+Il faut maintenant écrire le code qui correspond au notify.
+
+# mkdir slides_atbdx/handlers
+
+# vi slides_atbdx/handlers/main.yml
+
+# - name: compile slides
+#   make: chdir=/var/www/html/slides
+
+On relance les tests dans le conteneur... ? on dirait qu'on a des effets de bord entre tests.
+En effet, on a déjà déposé les slides dans ce conteneur lors d'un run précédent. Du coup,
+le notify n'est pas appelé. Du coup, on voit un test qui échoue.
+
+On va positionner une fonction teardown dans nos tests pour nettoyer ce dossier à la fin
+d'un test et ne pas poluer le suivant.
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+# teardown() {
+#   rm -rf /var/www/html/slides
+# }
+
+On relance les tests. Cette fois ils échouent mais on constate que c'est ansible qui ne
+peut pas s'exécuter. Pourquoi ?
+
+Tout simplement parce qu'on a oublié d'installer la commande landslide.
+
+# vi slides_atbdx/tasks/main.yml
+
+# package: name=python-landslide
+
+On relance les tests. SUCCESS.
+
+Maintenant, il nous reste à placer les slides générés dans le bon répertoire.
+
+Installation des slides
+-----------------------
+
+Si on a bonne mémoire, on a un bout de code historique qui déposait les mauvais slides au
+bon endroit... on va commencer par virer ce truc.
+
+# vi slides_atbdx/tasks/main.yml
+
+# supprimer la première ligne :
+# - copy: src=slides.md dest=/var/www/html/index.html
+
+Si on joue les tests, avec un peu de chance on va avoir quelque chose qui va casser.
+Ah... on a supprimé du code mais les tests passent. C'est louche. Regardons nos tests.
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+On va augmenter le ménage fait par teardown :
+
+# Modifier teardown() :
+# rm -rf /var/www/html/*
+
+Si on relance les tests maintenant on voit bien qu'on a cassé un test. Celui qui
+vérifie qu'on a le hashtag atbdx dans les slides.
+
+On peut maintenant faire en sorte de poser les slides compilés au bon endroit pour refaire
+passer ce test.
+
+# vi slides_atbdx/handlers/main.yml
+
+On va dire que si la commande make est exécutée, alors il faut déployer la nouvelle version
+des slides. Donc on va à nouveau utiliser notify pour cela :
+
+# - name: compile slides
+#   make: chdir=/var/www/html/slides
+#   notify: deploy slides
+# 
+# - name: deploy slides
+#   command: cp /var/www/html/slides/index.html /var/www/html/
+
+Validation complète
+-------------------
+
+Si on a fait les choses bien, maintenant notre test qui valide que index.html est bien un
+fichier html doit fonctionner...
+
+# vi slides_atbdx/tests/test_slides_atbdx 
+
+On va maintenant décommenter ce test puis rejouer les tests...
+
+OK, normalement on a terminé. On va tout de même vérifier qu'on peut déployer sur une vraie machine.
+
+Déploiement des bons slides
+---------------------------
+
+# cd ..
+# ansible-playbook -i inventory playbook.yml --diff
+
+Oh non ! on n'a pas installé make :( 
+Notre objectif c'est d'exécuter les tests dans un environnement aussi proche que possible
+de la production. Mais de temps en temps, comme maintenant, on a des loupés.
+Ici, make était déjà installé dans notre conteneur alors que sur notre machine de production
+il n'y a pas de raison qu'il y soit.
+Du coup, on ne s'est rendu compte de rien pendant nos tests mais on a un bug dans notre 
+rôle : on doit installer make.
+
+Correction d'un bug en TDD
+-------------------------- 
+
+Commenćons par écrire un test qui reproduit le bug. Pour cela, on va écrire un test dans
+lequel on s'assure que make n'est pas installé puis on va vérifier que le run échoue.
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+# test_fix12043_should_not_fail_when_make_not_installed() {
+#   DEBIAN_FRONTEND=noninteractive apt-get purge -y make >/dev/null 2>&1
+# 
+#   run_ansible
+# }
+
+Si on lance les tests, on voit bien que ansible ne peut pas s'exécuter puisqu'il
+manque make sur la machine. On a reproduit le bug de production.
+
+On peut maintenant le corriger avec la certitude qu'on n'aura plus jamais de
+régression sur ce point.
+
+#vi slides_atbdx/tasks/main.yml
+
+# - package: name=make
+
+On relance les tests : OK.
+
+Déploiement pour de bon
+-----------------------
+
+Cette fois on peut déployer pour de bon.
+
+# cd ..
+# ansible-playbook -i inventory playbook.yml --diff
+
+Ansible a bien installé make. Malheureusement, puisqu'on ne compile que lorsqu'on met
+à jour les slides et qu'ils sont déjà présent sur le serveur, rien ne se passe :(
+
+On pourrait encore améliorer notre rôle pour couvrir ce cas mais on ne va pas le
+faire aujourd'hui. On va se contenter de purger les slides installés pour recommencer :
+
+# ssh myslideshare sudo rm -rf /var/www/html/slides
+# ansible-playbook -i inventory playbook.yml --diff
+# xdg-open http://myslideshare
+
+# figlet QUESTIONS ?
+
