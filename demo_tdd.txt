@@ -1,0 +1,407 @@
+Un terminal pour montre l'arborescence et éditer les fichiers avec vim.
+Un terminal pour exécuter les tests et rentrer dans le conteneur.
+
+Initialisation du rôle et des tests
+-----------------------------------
+
+L'objectif maintenant va être d'illustrer la méthode TDD pour l'écriture de rôle ansible
+en écrivant un rôle qui va permettre de déployer nos slides sur un serveur web.
+
+Donc, en gros, on va recoder le rôle qu'on vient de voir.
+
+Comme l'a expliqué Luc, il y a un peu de plomberie pour pouvoir exécuter nos tests.
+On a donc crée un script qui nous permet de cacher la plomberie dans les cloisons
+pour démarrer un peu plus vite.
+
+Luc, est-ce que tu peux aller dans ansible.code et créer un nouveau rôle pour
+déployer les slides. Par exemple slides_atbdx.
+
+#> cd ansible.code/
+#> ./tools/ansible_make_new_tested_module slides_atbdx
+
+Si on regarde, on voit un répertoire roles dans lequel se trouvent nos rôles.
+
+Luc, est-ce que tu peux vérifier que notre nouveau rôle est bien présent ?
+
+#> cd roles
+#> ls
+
+Donc on voit notre nouveau rôle. Et si on regarde un peu l'arborescence crée, on
+voit qu'on a un répertoire tests qui contient justement la plomberie dont on
+parlait.
+
+#> tree
+
+On peut maintenant essayer de lancer les tests. Luc ?
+
+#> ./slides_atbdx/tests/run_tests.sh
+
+On voit que les tests ont échoué. Si on regarde attentivement la sortie, on
+peut voir que l'erreur se situe dans le fichier test_slides_atbdx, à la
+ligne 5 car false est différent de true.
+
+Il s'agit du squelette de test qui a été généré par Luc au début. On va aller
+voir ce qu'il y a dans ce squelette.
+
+Description du squelette de tests
+---------------------------------
+
+#> vi slides_atbdx/tests/test_slides_atbdx
+
+On utilise bash_unit. Toutes les fonctions dont le nom commence par test sont
+considérées comme des tests. Ici, on n'en a qu'une : test_failed.
+Si on va à la ligne 5 du fichier on peut voir l'assertion qui a échoué :
+assert_equals true false.
+
+On supprimera ce test pour écrire les véritables tests qu'on veut réaliser.
+
+Avant cela, on va jeter rapidement un oeil à un bout de la plomberie.
+
+La fonction setup est exécutée avant chaque test. On voit que, dans notre
+squelette, elle crée un fichier playbook.yml. C'est ce qu'on vient de voir
+dans la présentation ansible. C'est le fichier qui dit à ansible qu'est-ce
+qu'on veut appliquer comme rôles à notre serveur. Ici on veut appliquer le
+rôle qu'on est en train de coder : slides_atbdx.
+
+La fonction run_ansible, quand à elle, nous permet d'exécuter ansible dans
+notre conteneur. Le lancement d'ansible est emballé dans un peu de plomberie
+pour s'assurer qu'il s'est bien déroulé, éviter de le lancer directement
+en tant que root, et quelques autres détails qu'on ne va pas regarder pour
+l'instant.
+
+Si on en revient à notre test, on voit qu'il applique ansible puis il 
+s'assure que faux est vrai.
+
+Implémentation du test global
+-----------------------------
+
+On peut commencer à implémenter notre rôle. Donc notre objectif est de
+construire un serveur web qui diffuse nos slides. Du coup, on peut commencer
+par écrire un test, un peu ambitieux, qui s'assure que, effectivement,
+notre serveur est devenu un serveur web et qu'il diffuse nos slides.
+
+Luc comment est-ce qu'on pourrait vérifier cela ?
+
+Si on est sur un serveur web on doit pouvoir faire curl localhost et
+récupérer quelque chose. 
+
+# curl localhost
+
+Et peut-être qu'on peut recherche un motif dans le résultat pour s'assurer
+qu'il s'agit bien de nos slides. Luc, est-ce que tu peux remontrer notre
+magnifique slide sponsors ?
+
+Ben on pourrait simplement vérifier qu'on trouve bien le hashtag atbdx sur
+la page retournée et se dire que ća nous suffit pour être convaincu que
+ce sont bien nos slides.
+
+# curl localhost | grep '#atbdx'
+
+On va commencer par renommer notre test squelette qu'on va appeler
+test_webserver_serves_atbdx_slides
+
+Dans ce test, on veut jouer ansible, OK. Par contre notre assertion il faut
+qu'on la change pour rechercher '#atbdx' sur une page retournée par notre
+serveur :
+
+# assert "curl localhost | grep '#atbdx'"
+
+Luc, si tu relances le test, que se passe-t-il ?
+
+Donc on voit que notre test échoue. En particulier, on peut voir que curl
+ne peut pas se connecter sur le port 80... pas très étonnant, on n'a rien
+installé pour le moment.
+
+Implémentation du premier test
+------------------------------
+
+On va commencer pas écrire un test un peu moins ambitieux dans lequel on
+se contente de vérifier qu'on peut effectivement récupérer des pages web.
+Autrement dit, qu'on a bien un serveur web qui tourne sur la machine,
+peut importe les pages qu'il nous affiche.
+
+Luc, est-ce que tu peux mettre notre test en commentaire pour le moment ?
+
+On va écrire un nouveau test, qu'on va appeler test_serves_web_pages
+Dans ce test, on va se contenter de vérifier qu'on peut faire un curl
+vers localhost sans erreur :
+
+#test_serves_web_pages() {
+#  run_ansible
+#  assert "curl localhost"
+#}
+
+Sans surprise, on ne peut pas se connecter au serveur web, vu qu'on n'a rien
+fait pour...
+
+Installation de nginx
+---------------------
+
+Luc, est-ce que tu peux nous remontrer l'arborescence ?
+
+# tree
+.
+└── slides_atbdx
+    ├── tasks
+    └── tests
+        ├── ansible.cfg -> ../../../tools//ansible.cfg
+        ├── bash_unit -> ../../../tools//bash_unit
+        ├── Dockerfile
+        ├── run_tests.sh -> ../../../tools//run_tests.sh
+        └── test_slides_atbdx
+
+Comme on l'a vu précédemment, les tâches qu'on veut que ansible réalise sur
+notre serveur sont dans l'arborescence tasks.
+
+On va donc créer notre première tache qui va consister à installer un serveur
+web.
+
+# vi slides_atbdx/tasks/main.yml
+
+# - package: name=nginx
+
+Luc, est-ce que tu peux relancer les tests ?
+
+# ./slides_atbdx/tests/run_tests.sh 
+
+Ah... donc les tests échouent toujours. Pourtant on a installé nginx :(
+
+Luc, je pense qu'on a besoin d'aller dans le conteneur pour y voir plus clair...
+
+#./slides_atbdx/tests/run_tests.sh -d
+
+Maintenant nous sommes à l'intérieur du conteneur docker dans lequel on joue nos
+tests. C'est pratique lorsqu'on est convaincu d'avoir tout bien fait comme il
+faut mais que nos tests ne passent pas...
+
+Luc, est-ce que tu peux relancer les tests pour voir si nginx est bien installé ?
+
+# ./slides_atbdx/tests/run_tests.sh
+
+Donc sans surprise, ća ne marche pas mieux. Tu peux vérifier si nginx tourne ?
+
+# systemctl status nginx
+
+Ah ben oui, c'est installé mais on a juste oublié de le démarrer. C'est pas grave,
+maintenant qu'on est dedans, on va rester dans le conteneur. Est-ce que tu peux
+ouvrir le code du rôle pour ajouter le fait qu'on veut que nginx tourne ?
+
+# vi slides_atbdx/tasks/main.yml
+
+# - service: name=nginx state=started
+
+OK. Maintenant si on relance les tests, qu'est-ce qu'il se passe ?
+
+# ./slides_atbdx/tests/run_tests.sh
+
+SUCCESS. On vient de faire passer notre premier test ! On a maintenant un serveur
+web qui tourne.
+
+Dépôt naïf des slides
+---------------------
+
+Luc, est-ce qu'on peut revenir sur notre test global maintenant ?
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+Maintenant que nginx est installé et fonctionne, logiquement, il ne nous reste
+plus qu'à déposer les slides au bon endroit pour les voir ? Est-ce que tu
+peux décommenter notre premier test pour tenter de le faite passer puis le
+lancer ?
+
+# ./slides_atbdx/tests/run_tests.sh
+
+Sans surprise, le test ne passe pas puisqu'on n'a pas déposé les slides.
+Par contre, on peut peut-être améliorer notre test...
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+On va faire taire curl puisqu'on sait déjà que la connexion http fonctionne
+
+# assert "curl --silent localhost | grep '#atbdx'"
+
+On relance le test ?
+
+On va également ajouter un message pour clarifier ce qui s'est mal passé :
+
+# assert "curl --silent localhost | grep '#atbdx'" \
+#        "page should contain #atbdx"
+
+On va quand même essayer de ne pas rester plus longtemps avec un test rouge.
+
+Dans ansible, on peut placer des fichiers qu'on souhaite déposer sur le serveur
+dans l'arborescence files. Luc, est-ce que tu peux créer cette arborescence et
+y mettre nos slides ?
+
+# mkdir slides_atbdx/files
+# cp ../../slides/slides.md slides_atbdx/files
+
+Maintenant on va ajouter la tâche ansible qui va bien pour déposer nos slides
+au bon endroit :
+
+# vi slides_atbdx/tasks/main.yml
+
+# - copy: src=slides.md dest=/var/www/html/index.html
+
+On peut relancer les tests :
+
+# ./slides_atbdx/tests/run_tests.sh
+
+OK. On a maintenant un rôle qui configure un serveur web et y déploie nos slides.
+
+Refactoring
+-----------
+
+Les tests nous permettent de remanier notre code en étant confiant qu'on ne va
+rien casser.
+
+On a plusieurs choses qu'on pourrait améliorer mais pour l'exercice d'aujourd'hui
+on va se dire qu'on va essayer de séparer la partie installation de nginx dans
+un rôle dédié à ća et qu'on pourra réutiliser ailleurs.
+
+On peut regarder l'arborescence :
+
+# tree
+.
+└── slides_atbdx
+    ├── files
+    │   └── slides.md
+    ├── tasks
+    │   └── main.yml
+    └── tests
+        ├── ansible.cfg -> ../../../tools//ansible.cfg
+        ├── bash_unit -> ../../../tools//bash_unit
+        ├── Dockerfile
+        ├── run_tests.sh -> ../../../tools//run_tests.sh
+        └── test_slides_atbdx
+
+
+Donc on pourrait introduire un nouveau rôle à coté de slides_atbdx pour installer
+nginx.
+
+Quelle partie du code sert à l'installation de nginx ?
+
+# vi slides_atbdx/tasks/main.yml 
+
+# copier les deux lignes suivantes :
+
+# package: name=nginx
+# service: name=nginx state=started
+
+Donc on va créer le fichier main.yml de ce nouveau rôle :
+
+# mkdir -p nginx/tasks
+
+# vi nginx/tasks/main.yml
+
+# - package: name=nginx
+# - service: name=nginx state=started
+
+Ansible permet de déclarer des dépendances entre rôles. Dans notre cas, on va ajouter
+une dépendance vers le rôle nginx :
+
+# mkdir slides_atbdx/meta
+
+# vi slides_atbdx/meta/main.yml
+
+# dependencies:
+# - nginx
+
+Vérifions qu'on n'a rien cassé :
+
+# ./slides_atbdx/tests/run_tests.sh
+
+Maintenant on peut supprimer le code qui ne sert plus à rien dans notre premier rôle :
+
+# vi slides_atbdx/tasks/main.yml
+
+# Supprimer les deux lignes suivantes :
+# package: name=nginx
+# service: name=nginx state=started
+
+Est-ce que ća marche toujours ?
+
+# ./slides_atbdx/tests/run_tests.sh
+
+OK. Donc ici ce qu'on vient de faire c'est qu'on a totalement remanié la faćon de définir
+la configuration de notre serveur tout en étant confiant, grâce aux tests, qu'on n'a rien
+cassé.
+
+Déploiement sur un serveur
+--------------------------
+
+On va maintenant déployer sur un vrai serveur.
+
+# cd ..
+
+Comme on l'a vu précédemment on a besoin d'un inventaire :
+
+# vi inventory
+
+On ajoute la machine sur laquelle on veut déployer :
+
+# myslideshare
+
+On crée maintenant un playbook en indiquant le rôle qu'on veut appliquer :
+
+# vi playbook.yml
+# - hosts: all
+#   become: yes
+#   roles:
+#   - slides_atbdx
+
+On est prêt à jouer notre nouveau rôle mais avant ća on va vérifier qu'effectivement
+on n'a rien dans les manches :
+
+# xdg-open http://myslideshare
+
+On applique maintenant ansible :
+
+# ansible-playbook -i inventory playbook.yml --diff
+
+Si tout s'est bien passé, on peut maintenant voir les slides :
+
+# xdg-open http://myslideshare
+
+Oh mais qu'est-ce que c'est que cette horreur ? Suis-je bête, c'est du markdown, pas du
+html :(
+
+***************************************
+* S'il reste du temps on continue     *
+* On arrête au bout de 45 minutes max *
+***************************************
+
+Test qu'on a un fichier html
+----------------------------
+
+On va retourner dans notre répertoire roles pour tenter d'améliorer un peu nos tests et
+vérifier qu'on a bien un fichier html retourné.
+
+Comment est-ce qu'on peut vérifier ća ?
+
+# curl --silent myslideshare | file --mime-type -
+# curl --silent myslideshare | file --mime-type - | cut -d: -f2 
+# curl --silent myslideshare | file --mime-type - | cut -d: -f2 | tr -d ' '
+
+On s'attend à voir text/html
+
+# cd roles
+
+# vi slides_atbdx/tests/test_slides_atbdx
+
+# test_atbdx_slides_are_in_html_format() {
+#   run_ansible
+# 
+#   mime_type=$(curl --silent localhost | file --mime-type - | cut -d: -f2 | tr -d ' ')
+#   assert_equals text/html $mime_type
+# }
+
+Maintenant si on lance les tests :
+
+# ./slides_atbdx/tests/run_tests.sh
+
+OK, donc maintenant on a un test qui valide le bug qu'on a constaté. On peut avancer.
+
+*****************************************
+* TODO : coder l'exécution de landslide * 
+*****************************************
