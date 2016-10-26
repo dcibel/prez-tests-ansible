@@ -293,6 +293,8 @@ Quelle partie du code sert à l'installation de nginx ?
 
 Donc on va créer le fichier main.yml de ce nouveau rôle :
 
+!Pas de nouveau rôle : on va juste extraire le code dans nginx.yml
+
 # mkdir -p nginx/tasks
 
 # vi nginx/tasks/main.yml
@@ -441,6 +443,8 @@ Compiler les slides
 les slides lors du déploiement. Donc on va vérifier que le fichier index.html est bien
 construit lorsqu'on déploie les slides.
 
+Déposer les slides dans src et pas slides
+
 # vi slides_atbdx/tests/test_slides_atbdx
 
 # test_slides_are_compiled_on_server() {
@@ -584,23 +588,20 @@ régression sur ce point.
 
 On relance les tests : OK.
 
+Ajouter le slide questions
+--------------------------
+
+Tant qu'on y est, on va ajouter un slide question
+
+:read !figlet Question
+
 Déploiement pour de bon
 -----------------------
 
 Cette fois on peut déployer pour de bon.
 
 # cd ..
-# ansible-playbook -i inventory playbook.yml --diff
-
-Ansible a bien installé make. Malheureusement, puisqu'on ne compile que lorsqu'on met
-à jour les slides et qu'ils sont déjà présent sur le serveur, rien ne se passe :(
-
-On pourrait encore améliorer notre rôle pour couvrir ce cas mais on ne va pas le
-faire aujourd'hui. On va se contenter de purger les slides installés pour recommencer :
-
-# ssh myslideshare sudo rm -rf /var/www/html/slides
-# ansible-playbook -i inventory playbook.yml --diff
+# ansible-playbook -i inventory playbook.yml
 # xdg-open http://myslideshare
 
-# figlet QUESTIONS ?
 
