@@ -9,12 +9,6 @@ backup_ssh_config() {
   echo "backup $1"
 }
 
-setup_vi() {
-  local vimrc=$HOME/.vimrc
-  grep -q "^set nu" ${vimrc} || echo "set nu" >>${vimrc}
-  echo "setting vim configuration"
-}
-
 setup_boxes() {
   echo -n "setting up vagrant boxes and configuration"
   VAGRANT_BOX_UPDATE_CHECK_DISABLE=yes vagrant up >/dev/null
@@ -24,7 +18,7 @@ setup_boxes() {
   echo " : done"
 }
 
-setup_vi
 backup_ssh_config ${ssh_config}
 setup_boxes ${ssh_config}
 xdg-open slides/local_sponsors.html &
+clear
