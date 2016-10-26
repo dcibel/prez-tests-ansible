@@ -12,7 +12,7 @@ run_test="run_tests.sh"
 bash_unit="bash_unit"
 ansible_cfg="ansible.cfg"
 
-tools=../../../tools/
+tools=../../../tools
 [ ! -f ${run_test} ]    && ln -s ${tools}/${run_test}    .
 [ ! -f ${bash_unit} ]   && ln -s ${tools}/${bash_unit}   .
 [ ! -f ${ansible_cfg} ] && ln -s ${tools}/${ansible_cfg} .
@@ -44,7 +44,6 @@ setup() {
 
   cat << EOF > /tmp/ansible/playbook.yml
 - hosts: all
-  become: yes
   roles:
     - role: ${module}
 EOF
