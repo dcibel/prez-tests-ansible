@@ -77,7 +77,7 @@ Regardons maintenant le "run ansible"
 << RUN ANSIBLE >>
 
 On commente on lit les noms des tâches 
-check/ok
+ok
 
 On peut revoir le navigateur ?
 
@@ -114,6 +114,8 @@ changed: sur le server2
 
 On remarque que rien ne se passe sur le server1, et que l'on installe/démarre nginx puis déploie les slides sur le server2
 
+rien ne se passe sur le server1
+
 #> xdg-open http://server2
 
 >> Pascal va sur firefox en pleine écran et on visualise le slide sponsors
@@ -133,6 +135,11 @@ Introduction
 ------------
 
 Nous utilisons ansible quotidiennement pour installer nos serveurs de manière automatique. Nous gérons environ 200 serveurs avec une trentaine de rôles ansible. Notre problématique est de pouvoir modifier un rôle ansible sans avoir d'effet de bord sur un serveur qui pourrait ne pas être concerné par cette modification.
+
+plutot parler d'un exemple de modification de rôle sur une plate-forme.
+réutilisation de roles pour différents clients
+obligation de qualité.
+
 L'approche TDD nous permet de sécuriser le déploiement de nos rôles ansible en couvrant la non-régression des rôles.
 Cette approche nous permet aussi de nous focaliser sur les fonctionnalités nécessaires à apporter dans un rôle.
 
@@ -143,16 +150,19 @@ Ainsi, pour ceux qui ne connaissent pas cette méthodologie, nous appliquons les
   - faire passer ce test au vert le plus rapidement possible avec une implémentation 
   - remanier le code pour répondre aux critères de simplicité.
 
-Nous avons mis en place une infra-structure qui permet de tester nos rôles ansible.
-Un script shell va s'occuper :
-  * de créer un containeur docker
-  * de lancer ansible pour le rôle que nous souhaitons testé dans ce containeur 
-  * et de lancer les tests de ce rôle
+Expliciter le problème de faire du TDD avec ansible
+TODO : 
+on veut tester sur notre poste notre code sur notre machine
 
 >> slide plomberie
 
-Voici un schéma qui détaille notre infra-structure de test. 
-J'insiste pour dire que les tests sont joués dans un containeur sur le poste de l'admistrateur système.
+>> luc commente le slide 
+Nous avons mis en place un outil qui permet de tester nos rôles ansible.
+Cet outil va s'occuper :
+  * de créer un containeur docker
+  * et de lancer les tests bash_unit de ce containeur 
+
+J'insiste pour dire que les tests sont joués dans un containeur sur le poste de développement. 
 
 Maintenant, nous allons vous montrer le développement guidé par les tests d'un role ansible.
  
