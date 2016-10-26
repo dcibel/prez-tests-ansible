@@ -48,7 +48,8 @@ Description du squelette de tests
 
 #> vi slides_atbdx/tests/test_slides_atbdx
 
-On utilise bash_unit. Toutes les fonctions dont le nom commence par test sont
+Ce fichier est un script shell, on utilise bash_unit. 
+Toutes les fonctions dont le nom commence par test sont
 considérées comme des tests. Ici, on n'en a qu'une : test_failed.
 Si on va à la ligne 5 du fichier on peut voir l'assertion qui a échoué :
 assert_equals true false.
@@ -287,6 +288,8 @@ Quelle partie du code sert à l'installation de nginx ?
 
 # package: name=nginx
 # service: name=nginx state=started
+
+>> on pourrait faire un extract methode dans le rôle slides_atbdx afin de faire apparaitre nginx.yml
 
 Donc on va créer le fichier main.yml de ce nouveau rôle :
 

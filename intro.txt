@@ -14,7 +14,7 @@ Tout d'abord le slide des sponsors. Merci à eux.
 
 Pascal, la suite s'il te plait.
 Ah ... t'as le réseau ? Oui ?
-Désolé, notre serveur webserver1 ne répond.
+Désolé, notre serveur server1 ne répond.
 
 
 "Les slides ne sont pas déployés ?? Pascal ! Joue ansible s'il te plait" :
@@ -35,7 +35,7 @@ Vu que c'est une conférence qui va parler d'ansible revenons un peu sur que Pas
 ansible
 -------
 Nous venons de déployer les slides sur le serveur via ansible.
-Les slides sont disponibles sur la machine appelée webserver1.
+Les slides sont disponibles sur la machine appelée server1.
 Est-ce que l'on peut voir ce que tu as tappé ?
 
 >> pascal splitte en deux son écran
@@ -48,27 +48,27 @@ Est-ce que l'on peut voir ce que tu as tappé ?
 Pascal, est-ce que tu peux nous montrer le fichier *inventory* ?
 
 #> cat inventory
-webserver1
+server1
 
 Ok. donc ce fichier liste les machines de notre plate-forme.
 Actuellement, il n'y en a qu'une.
-webserver1
+server1
 
-Ainsi, nous avons joué ansible sur la machine webserver1.
+Ainsi, nous avons joué ansible sur la machine server1.
 Regardons le fichier playbook.yml qui était un paramètre de la commande
 
 #> cat playbook.yml
 
 Ok c'est du yaml, il est court.
 
-hosts: all 
-                =>  signifie que l'on va jouer la suite
+- hosts: all  =>  signifie que l'on va jouer la suite
                     pour toutes les machines de l'inventaire 
-become: true    =>  [privilege_escalation] become=true dans le fichier local ansible.cfg et plus besoin de cette ligne
-tasks: => 2 taches sont listées httpserver et slides
-  - httpserver 
-  - slides 
 
+  roles:      =>  2 roles sont listées httpserver et slides, ce sont les
+                  roles que l'on va appliquer sur le serveur
+    - httpserver
+    - slides
+                
 On regarde de nouveau la ligne de commande 
 Donc la commande ansible-playbook a joué ce playbook sur l'inventaire.
 
@@ -83,23 +83,25 @@ On peut revoir le navigateur ?
 
 (les slides apparaissent sur l'écran splitté en deux)
 
+>> on passe au slide ansible
+
 Tiens j'ai une deuxième machine sur laquelle j'aimerais déployer les slides.
 
 >> Pascal zoome sur le terminal
 
 On peut se connecter en ssh dessus ?
 
-#> ssh webserver2 # doit-on changer le username vagrant ???
+#> ssh server2 # doit-on changer le username vagrant ???
 #> exit
 
 Y a t'il un serveur web qui écoute sur la machine ?
 
-#> ssh webserver2 
+#> ssh server2 
 #> telnet localhost 80
 
 Ok donc on va pouvoir jouer ansible sur cette machine.
 
->> Pascal édite le fichier inventory : ajout de webserver2
+>> Pascal édite le fichier inventory : ajout de server2
 
 On rejoue ansible-playbook :
 
@@ -107,43 +109,51 @@ On rejoue ansible-playbook :
 
 << RUN ANSIBLE >>
 
-ok: sur le webserver1
-changed: sur le webserver2
+ok: sur le server1
+changed: sur le server2
 
-On remarque que rien ne se passe sur le webserver1, et que l'on installe/démarre nginx puis déploie les slides sur le webserver2
+On remarque que rien ne se passe sur le server1, et que l'on installe/démarre nginx puis déploie les slides sur le server2
 
-#> xdg-open http://webserver2
+#> xdg-open http://server2
 
 >> Pascal va sur firefox en pleine écran et on visualise le slide sponsors
 
 Les slides sont bien déployés sur ce serveur.
 
->> On passe au slide suivant
+>> Pascal ferme les slides sur le server2
+>> On arrive sur le slide ansible.
+
+Ok donc nous venons d'installer nginx sur la machine server1, le démarrer puis deployer les slides.
+Dans un deuxième temps, nous avons fait la même chose sur le server2 
+
+Voila la courte introduction d'ansible. J'espère que c'était clair pour vous.
+Passons à la suite.
 
 Introduction
 ------------
 
-L'installation de nos serveurs se fait de manière automatique par nos rôles ansible. Nous gérons environ 200 serveurs avec une trentaine de rôles ansible.
-Notre problématique est de pouvoir modifier un rôle ansible sans avoir d'effet de bord sur un serveur qui pourrait ne pas être concerné par cette modification.
+Nous utilisons ansible quotidiennement pour installer nos serveurs de manière automatique. Nous gérons environ 200 serveurs avec une trentaine de rôles ansible. Notre problématique est de pouvoir modifier un rôle ansible sans avoir d'effet de bord sur un serveur qui pourrait ne pas être concerné par cette modification.
 L'approche TDD nous permet de sécuriser le déploiement de nos rôles ansible en couvrant la non-régression des rôles.
 Cette approche nous permet aussi de nous focaliser sur les fonctionnalités nécessaires à apporter dans un rôle.
+
 >> slide TDD
 
-Ainsi, pour ceux qui ne connaissent pas cette méthodologie, nous appliquons l'algorithme suivant :
+Ainsi, pour ceux qui ne connaissent pas cette méthodologie, nous appliquons les trois phases du TDD :
   - écrire un test rouge qui décrit un aspect de la plate-forme que nous attendons
   - faire passer ce test au vert le plus rapidement possible avec une implémentation 
-  - remanier le code 
+  - remanier le code pour répondre aux critères de simplicité.
 
-Après avoir essayé quelques frameworks de test (test-kitchen, molécule), nous avons mis en place un infra-structure qui permet de tester nos rôles ansible.
+Nous avons mis en place une infra-structure qui permet de tester nos rôles ansible.
 Un script shell va s'occuper :
-  * de créer un containeur
+  * de créer un containeur docker
   * de lancer ansible pour le rôle que nous souhaitons testé dans ce containeur 
-  * et de lancer les teste de ce rôle
+  * et de lancer les tests de ce rôle
+
 >> slide plomberie
 
-Voici un schéma qui explique notre démarche.
+Voici un schéma qui détaille notre infra-structure de test. 
+J'insiste pour dire que les tests sont joués dans un containeur sur le poste de l'admistrateur système.
 
 Maintenant, nous allons vous montrer le développement guidé par les tests d'un role ansible.
  
-
 

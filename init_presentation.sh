@@ -17,7 +17,7 @@ setup_vi() {
 
 setup_boxes() {
   echo -n "setting up vagrant boxes and configuration"
-  vagrant up >/dev/null
+  VAGRANT_BOX_UPDATE_CHECK_DISABLE=yes vagrant up >/dev/null
   vagrant ssh-config > ${1}
   local inventory=$(vagrant status | grep running | cut -d' ' -f1 | xargs echo | tr ' ' ',')
   ansible -i ${inventory} -m setup all >/dev/null
