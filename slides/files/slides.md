@@ -19,6 +19,13 @@
     #atbdx
 
 ---
+
+# Développement guidé par les tests de rôles Ansible
+
+OAB
+
+
+---
 ![](ansible.svg)
 
 ---

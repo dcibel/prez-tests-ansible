@@ -58,6 +58,7 @@ div.slide div.inner {
     width: 800px;
     height: 600px;
     margin: auto;
+    display: table-cell;
 }
 
 h1 {
@@ -464,45 +465,15 @@ a {
   border-bottom: 2px solid #3f3f3f;
 }
 
-pre, code, tt {
-  font-family: Monaco, Consolas, 'Bitstream Vera Sans Mono', 'Lucida Console', FreeMono, Courier, monospace;
-}
-
-pre, .gist .gist-file .gist-data {
-  font-size: 18px;
-  max-height: 485px;
-  padding-top: 0.25em !important;
-  padding-right: 0.5em !important;
-  padding-left: 0.5em !important;
-  overflow: auto;
-}
-
-/* render a nice scrollbar in overflowed pre area's */
-::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: -webkit-gradient(linear, left bottom, left top, from(#777), to(#bbd));
-  -webkit-border-radius: 1ex;
-}
-::-webkit-scrollbar-corner {
-  background: #dedede;
-}
-
-blockquote {
-  border-left: solid 8px #778;
-  padding: .1ex 1ex;
-  font-style: italic;
-  font-size: 20px;
+pre {
+  font-size: 16px;
+  font-family: Monaco, Courier, monospace;
 }
 
 li {
   padding: 10px 0;
   font-size: 20px;
 }
-
-li pre { margin-left: 0em; }
 
 .slide header:only-child h1 {
   line-height: 180%;
@@ -677,7 +648,6 @@ aside {
 .vg { color: #19177C } /* Name.Variable.Global */
 .vi { color: #19177C } /* Name.Variable.Instance */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
-.lineno { padding-right: 10px } /* A few space after linenos */
 
 #blank {
   position: absolute;
@@ -688,10 +658,6 @@ aside {
   height: 100%;
   z-index: 64;
   display: none;
-}
-
-.image-reference {
-  display: inline;
 }
 
     </style>
@@ -1103,13 +1069,11 @@ aside {
                 break;
             case 37: // left arrow
             case 33: // page up
-                event.preventDefault();
                 prevSlide();
                 break;
             case 39: // right arrow
             case 32: // space
             case 34: // page down
-                event.preventDefault();
                 nextSlide();
                 break;
             case 50: // 2
@@ -1263,7 +1227,7 @@ aside {
         document.addEventListener('keydown', checkModifierKeyDown, false);
         document.addEventListener('DOMMouseScroll', handleWheel, false);
 
-        document.onmousewheel = handleWheel;
+        window.onmousewheel = document.onmousewheel = handleWheel;
         window.onresize = expandSlides;
 
         for (var i = 0, el; el = slides[i]; i++) {
@@ -1285,7 +1249,6 @@ aside {
     </script>
     
     
-    
     <!-- /Javascripts -->
 </head>
 <body>
@@ -1298,7 +1261,7 @@ aside {
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-1">
+        <div class="slide">
           <div class="inner">
             
             
@@ -1337,7 +1300,7 @@ onepoint.
             </aside>
             
             <aside class="page_number">
-              1/6
+              1/7
             </aside>
           </footer>
         </div>
@@ -1345,7 +1308,37 @@ onepoint.
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-2">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Développement guidé par les tests de rôles Ansible</h1></header>
+            
+            
+            <section><p>OAB</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              2/7
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
           <div class="inner">
             
             
@@ -1365,7 +1358,7 @@ onepoint.
             </aside>
             
             <aside class="page_number">
-              2/6
+              3/7
             </aside>
           </footer>
         </div>
@@ -1373,7 +1366,7 @@ onepoint.
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-3">
+        <div class="slide">
           <div class="inner">
             
             
@@ -1401,7 +1394,7 @@ donc ça se code, donc ça se teste.</p>
             </aside>
             
             <aside class="page_number">
-              3/6
+              4/7
             </aside>
           </footer>
         </div>
@@ -1409,7 +1402,7 @@ donc ça se code, donc ça se teste.</p>
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-4">
+        <div class="slide">
           <div class="inner">
             
             <header><h1>TDD</h1></header>
@@ -1433,7 +1426,7 @@ donc ça se code, donc ça se teste.</p>
             </aside>
             
             <aside class="page_number">
-              4/6
+              5/7
             </aside>
           </footer>
         </div>
@@ -1441,7 +1434,7 @@ donc ça se code, donc ça se teste.</p>
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-5">
+        <div class="slide">
           <div class="inner">
             
             <header><h1>Plomberie</h1></header>
@@ -1465,7 +1458,7 @@ Un script shell initie toute cette infrastructure de test.</p>
             </aside>
             
             <aside class="page_number">
-              5/6
+              6/7
             </aside>
           </footer>
         </div>
@@ -1473,7 +1466,7 @@ Un script shell initie toute cette infrastructure de test.</p>
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide slide-6">
+        <div class="slide">
           <div class="inner">
             
             <header><h1>Intégration continue</h1></header>
@@ -1495,7 +1488,7 @@ Un script shell initie toute cette infrastructure de test.</p>
             </aside>
             
             <aside class="page_number">
-              6/6
+              7/7
             </aside>
           </footer>
         </div>
@@ -1516,7 +1509,7 @@ Un script shell initie toute cette infrastructure de test.</p>
       
       
       <tr id="toc-row-2">
-        <th><a href="#slide2">-</a></th>
+        <th><a href="#slide2">Développement guidé par les tests de rôles Ansible</a></th>
         <td><a href="#slide2">2</a></td>
       </tr>
       
@@ -1528,20 +1521,26 @@ Un script shell initie toute cette infrastructure de test.</p>
       
       
       <tr id="toc-row-4">
-        <th><a href="#slide4">TDD</a></th>
+        <th><a href="#slide4">-</a></th>
         <td><a href="#slide4">4</a></td>
       </tr>
       
       
       <tr id="toc-row-5">
-        <th><a href="#slide5">Plomberie</a></th>
+        <th><a href="#slide5">TDD</a></th>
         <td><a href="#slide5">5</a></td>
       </tr>
       
       
       <tr id="toc-row-6">
-        <th><a href="#slide6">Intégration continue</a></th>
+        <th><a href="#slide6">Plomberie</a></th>
         <td><a href="#slide6">6</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-7">
+        <th><a href="#slide7">Intégration continue</a></th>
+        <td><a href="#slide7">7</a></td>
       </tr>
       
       
