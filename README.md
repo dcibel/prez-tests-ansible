@@ -1,15 +1,18 @@
-# Présentation des tests avec ansible
+Titre : développement guidé par les tests de rôles ansible
+Format : conférence (50')
+Résumé : En 2016, installer et configurer un serveur ça s'automatise, donc ça se code, donc ça se teste.
 
+Description :
+En 2016, installer et configurer un serveur ça s'automatise, donc ça se code, donc ça se teste.
+Nos serveurs sont configurés automatiquement grâce à Ansible.
+Après une présentation succincte d'Ansible, nous allons vous présenter notre démarche TDD pour l'écriture de nos rôles.
+Jusqu'à présent nous sommes parvenus à développer par les tests une trentaine de rôles Ansible qui nous ont permis de construire et de maintenir environ 200 serveurs.
 
-0. questions pour l'auditoire afin de connaitre leur niveau de connaissance
-  - "levez la main ceux qui ont déjà écrit un test ?" 
-  - "baisser les mains ceux qui ne connaissent pas TDD"
-  - "baisser les mains ceux qui ne connaissent pas ansible"
-  - "baisser les mains ceux qui ne connaissent pas docker"
-  => poser des questions jusqu'à qu'il n'y ait plus que deux personnes (les orateurs) avec les mains levées
-  => par conséquent, on peut conclure que nous sommes des experts dans notre domaine !
+Bio :
+Développeurs pendant trop longtemps.
+ScrumMaster en passant.
+Passés du côté OPScure (même Luc) depuis quelques temps.
+Praticiens passionnés, à l'affût de bonnes idées pour être de meilleurs professionnels, dans le refus des fausses bonnes idées.
+Ravis de partager leur dernière idée farfelue.
 
-1. Présentation de TDD, ansible et docker pour les gens qui ne connaissent pas
-2. Clarifier qu'on ne teste pas notre plate-forme mais notre code ansible
-3. Écrire du ansible en tdd avec une dose de magie
-
+#ansible #tdd #jenkins
