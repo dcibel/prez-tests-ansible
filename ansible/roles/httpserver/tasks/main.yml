@@ -1,6 +1,2 @@
 - name: "installation nginx"
   package: name=nginx state=present
-
-- name: "démarrage nginx"
-  service: name=nginx state=started enabled=yes 
-
