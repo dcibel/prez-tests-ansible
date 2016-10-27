@@ -38,20 +38,26 @@ OAB
 > donc ça se code, donc ça se teste.
 
 ---
-# TDD
-1.
-2.
-3.
+# Développement par les tests
+
+
+>    . créer un seul test unitaire décrivant un aspect du programme
+>
+>    . s'assurer, en l'exécutant, que ce test échoue pour les bonnes raisons
+>
+>    . écrire juste assez de code, le plus simple possible, pour que ce test passe
+>
+>    . remanier le code autant que nécessaire pour se conformer aux critères de simplicité
+>
+>    . recommencer, en accumulant les tests au fur et à mesure
+
+*définition provenant de l'*[Institut Agile](http://institut-agile.fr).
 
 ---
 # Plomberie
-Ansible est lancé dans un containeur. Les tests sont lancés dans ce containeur.
-Un script shell initie toute cette infrastructure de test.
-
 ![](plomberie.svg)
-
 
 ---
 # Intégration continue
 
-![IC](./jenkins-medium.jpg)
+![IC](./jenkins-medium.png)
