@@ -20,22 +20,26 @@
 
 ---
 
-# Développement guidé par les tests de rôles Ansible
-
-OAB
-
-
----
 ![](ansible.svg)
 
 ---
-#
+
+#_
+
+# Développement guidé par les tests de rôles Ansible
+
+En 2016, installer et configurer un serveur :
+
+* ça s'automatise
+* donc ça se code
+* donc ça se teste
+
+Nos serveurs sont configurés automatiquement et maintenus grâce à Ansible.
+
 * environ 200 serveurs répartis sur 9 plate-formes différentes
 * une trentaine de rôles ansible
+* comment modifier un rôle sans avoir peur de casser une autre plate-forme ?
 
-
-> En 2016, installer et configurer un serveur ça s'automatise, 
-> donc ça se code, donc ça se teste.
 
 ---
 # TDD
