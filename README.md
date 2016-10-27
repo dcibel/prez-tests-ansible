@@ -15,4 +15,7 @@ Passés du côté OPScure (même Luc) depuis quelques temps.
 Praticiens passionnés, à l'affût de bonnes idées pour être de meilleurs professionnels, dans le refus des fausses bonnes idées.
 Ravis de partager leur dernière idée farfelue.
 
-#ansible #tdd #jenkins
+ #ansible #tdd #jenkins
+
+[slides](https://multimediabs.github.io/prez-tests-ansible/slides)
+
