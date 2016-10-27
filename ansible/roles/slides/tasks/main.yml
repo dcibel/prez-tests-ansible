@@ -1,7 +1,2 @@
 - name: "déploiement des slides"
-  copy: src={{item}} dest=/var/www/html/{{item}}
-  with_items:
-    - index.html
-    - ansible.svg
-    - plomberie.svg
-    - jenkins-medium.jpg
+  copy: src=slides/ dest=/var/www/html/
