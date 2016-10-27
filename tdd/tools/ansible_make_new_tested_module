@@ -56,6 +56,6 @@ run_ansible() {
 __EOF__
 fi
 
-echo "module ${module} created in $(dirname $(pwd))" >&2
-echo "to run tests:" >&2
-echo "cd $(dirname $(pwd)); ./tests/run_tests.sh" >&2
+echo "module [${module}] created" >&2
+printf "to run tests:\n" >&2
+printf "\tcd $(dirname $(pwd))\n\t./tests/run_tests.sh\n" >&2
