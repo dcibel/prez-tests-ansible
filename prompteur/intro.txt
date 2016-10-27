@@ -68,7 +68,10 @@ Ok c'est du yaml, il est court.
                   roles que l'on va appliquer sur le serveur
     - httpserver
     - slides
-                
+              
+Pascal, on peut regarder le rôle httpserver afin de savoir ce qu'il fait.
+Ok, il installe le server nginx et s'assure qu'il est démarré.
+ 
 On regarde de nouveau la ligne de commande 
 Donc la commande ansible-playbook a joué ce playbook sur l'inventaire.
 
@@ -134,25 +137,22 @@ Passons à la suite.
 Introduction
 ------------
 
-Nous utilisons ansible quotidiennement pour installer nos serveurs de manière automatique. Nous gérons environ 200 serveurs avec une trentaine de rôles ansible. Notre problématique est de pouvoir modifier un rôle ansible sans avoir d'effet de bord sur un serveur qui pourrait ne pas être concerné par cette modification.
+Nous utilisons ansible quotidiennement pour installer et maintenir nos serveurs. Nous gérons environ 200 serveurs avec une trentaine de rôles ansible.
+Sur 9 plate-formes distinctes pour des clients différents.
 
-plutot parler d'un exemple de modification de rôle sur une plate-forme.
-réutilisation de roles pour différents clients
-obligation de qualité.
+
+Nous ré-utilisons les rôles ansible pour différents clients, l'ajout d'une fonctionnalités peut entrainer des régressions.
+
+comment modifier un rôle sans avoir peur de casser une autre plate-forme ?
 
 L'approche TDD nous permet de sécuriser le déploiement de nos rôles ansible en couvrant la non-régression des rôles.
 Cette approche nous permet aussi de nous focaliser sur les fonctionnalités nécessaires à apporter dans un rôle.
 
 >> slide TDD
 
-Ainsi, pour ceux qui ne connaissent pas cette méthodologie, nous appliquons les trois phases du TDD :
-  - écrire un test rouge qui décrit un aspect de la plate-forme que nous attendons
-  - faire passer ce test au vert le plus rapidement possible avec une implémentation 
-  - remanier le code pour répondre aux critères de simplicité.
+Ainsi, pour ceux qui ne connaissent pas le développement guidé par les tests.
 
-Expliciter le problème de faire du TDD avec ansible
-TODO : 
-on veut tester sur notre poste notre code sur notre machine
+On veut tester sur notre poste, le code qui configure nos serveurs de production.
 
 >> slide plomberie
 
@@ -160,10 +160,9 @@ on veut tester sur notre poste notre code sur notre machine
 Nous avons mis en place un outil qui permet de tester nos rôles ansible.
 Cet outil va s'occuper :
   * de créer un containeur docker
-  * et de lancer les tests bash_unit de ce containeur 
+  * et de lancer ansible dans ce containeur
+  * puis d'éxécuter les tests bash_unit de ce containeur 
 
 J'insiste pour dire que les tests sont joués dans un containeur sur le poste de développement. 
 
 Maintenant, nous allons vous montrer le développement guidé par les tests d'un role ansible.
- 
-
