@@ -28,17 +28,21 @@
 
 # Développement guidé par les tests de rôles Ansible
 
-En 2016, installer et configurer un serveur :
+Nous utilisons Ansible pour :
 
-* ça s'automatise
-* donc ça se code
-* donc ça se teste
+* automatiser l'installation de nos serveurs
+* automatiser la maintenance de nos serveurs
+* 30 roles ansible / 200 serveurs / 9 plate-formes
 
-Nos serveurs sont configurés automatiquement et maintenus grâce à Ansible.
+Le problème :
 
-* environ 200 serveurs répartis sur 9 plate-formes différentes
-* une trentaine de rôles ansible
-* comment modifier un rôle sans avoir peur de casser une autre plate-forme ?
+* je joue ansible sur la prod, **la peur au ventre**
+
+Un exemple :
+
+* en janvier, Luc code le rôle nginx pour la pf A
+* en mars, Pascal le fait évoluer pour la pf B
+* en avril, Luc tente de mettre à jour la pf A : FAIL
 
 
 ---
@@ -61,3 +65,12 @@ Nos serveurs sont configurés automatiquement et maintenus grâce à Ansible.
 # Intégration continue
 
 ![IC](./jenkins-medium.png)
+
+---
+
+                ___                  _   _                   ___ 
+               / _ \ _   _  ___  ___| |_(_) ___  _ __  ___  |__ \
+              | | | | | | |/ _ \/ __| __| |/ _ \| '_ \/ __|   / /
+              | |_| | |_| |  __/\__ \ |_| | (_) | | | \__ \  |_| 
+               \__\_\\__,_|\___||___/\__|_|\___/|_| |_|___/  (_) 
+                                                                 
