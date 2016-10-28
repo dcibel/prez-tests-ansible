@@ -1,0 +1,9 @@
+test_can_serve_slides
+
+test_can_serve_web_pages
+
+extract nginx.yml
+
+installation
+
+test_can_server_html
