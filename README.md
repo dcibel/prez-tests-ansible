@@ -18,4 +18,3 @@ Ravis de partager leur dernière idée farfelue.
  #ansible #tdd #jenkins
 
 [slides](https://multimediabs.github.io/prez-tests-ansible/slides)
-
