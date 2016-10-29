@@ -19,3 +19,24 @@ Ravis de partager leur dernière idée farfelue.
 
 [slides](https://multimediabs.github.io/prez-tests-ansible/slides)
 
+Pour tester vous même :
+
+```bash
+git clone https://github.com/multimediabs/prez-tests-ansible.git
+
+vagrant up #patience...
+
+#présentation ansible :
+cd ansible
+ansible-playbook -i inventory playbook.yml
+xdg-open http://server1
+
+#TDD avec ansible :
+cd ../tdd
+./tools/ansible_make_new_tested_module slides
+cd roles
+./slides/test/run_tests.sh
+#puis suivez la démo dans les slides
+
+```
+
