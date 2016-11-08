@@ -22,7 +22,8 @@ docker_flags_file=".docker_flags"
 root_path="../../.."
 roles_path="${root_path}/roles"
 tools_path="${root_path}/tools"
-inside_tests_path="/test/roles/${test_name}/tests"
+inside_roles_path="/etc/ansible"
+inside_tests_path="${inside_roles_path}/roles/${test_name}/tests"
 docker_distrib="${tools_path}/Dockerfile_${distrib_name}_docnfc"
 
 verbose_flag=0
@@ -106,7 +107,7 @@ else
   
   docker_flags="--privileged"
   docker_exec_flags="-i"
-  docker_volumes="-v $(cd ${root_path};pwd):/test"
+  docker_volumes="-v $(cd ${root_path};pwd):${inside_roles_path}"
 
   [ -t 1 ] && docker_exec_flags="$docker_exec_flags -t"
   docker_flags="$docker_flags $([ -f ${docker_flags_file} ] && cat ${docker_flags_file} || true)"

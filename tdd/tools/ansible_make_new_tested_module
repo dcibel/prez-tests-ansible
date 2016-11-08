@@ -22,7 +22,7 @@ then
   cat << EOF >Dockerfile
 FROM debian:jessie_ansible_test
 
-WORKDIR /test/roles/
+WORKDIR /etc/ansible/roles
 
 ENV LANG C.UTF-8
 EOF
